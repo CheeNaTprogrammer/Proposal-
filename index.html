@@ -170,26 +170,27 @@ button {
 
 </div>
 
-
 <script>
-
+    
 const box = document.getElementById("box");
 const noBtn = document.getElementById("noBtn");
 
-// position
+// position + velocity
 let x = noBtn.offsetLeft;
 let y = noBtn.offsetTop;
-
-// velocity
 let vx = 0;
 let vy = 0;
 
-box.addEventListener("mousemove", (e) => {
+/* =========================
+   APPLY FORCE (CORE ENGINE)
+========================= */
+
+function applyForce(clientX, clientY) {
 
     const rect = box.getBoundingClientRect();
 
-    const mouseX = e.clientX - rect.left;
-    const mouseY = e.clientY - rect.top;
+    const mouseX = clientX - rect.left;
+    const mouseY = clientY - rect.top;
 
     const btnX = x + noBtn.offsetWidth / 2;
     const btnY = y + noBtn.offsetHeight / 2;
@@ -199,17 +200,42 @@ box.addEventListener("mousemove", (e) => {
 
     let distance = Math.sqrt(dx * dx + dy * dy);
 
-    if (distance < 200) {
+    // prevent division errors
+    if (distance === 0) return;
+
+    if (distance < 220) {
 
         dx /= distance;
         dy /= distance;
 
-        const force = 10;
+        // 🔥 stronger force when closer
+        const force = (220 - distance) * 0.4;
 
         vx += dx * force;
         vy += dy * force;
     }
+}
+
+/* =========================
+   MOUSE SUPPORT
+========================= */
+
+box.addEventListener("mousemove", (e) => {
+    applyForce(e.clientX, e.clientY);
 });
+
+/* =========================
+   TOUCH SUPPORT (FIX FOR MOBILE)
+========================= */
+
+box.addEventListener("touchmove", (e) => {
+    const t = e.touches[0];
+    applyForce(t.clientX, t.clientY);
+});
+
+/* =========================
+   PHYSICS LOOP
+========================= */
 
 function update() {
 
@@ -235,12 +261,18 @@ function update() {
 
 update();
 
-// YES button
+/* =========================
+   YES BUTTON
+========================= */
+
 function goToPage() {
     window.location.href = "number.html";
 }
 
-// Hearts
+/* =========================
+   HEARTS
+========================= */
+
 function createHeart() {
     const heart = document.createElement("div");
     heart.classList.add("heart");
@@ -257,7 +289,10 @@ function createHeart() {
 }
 
 setInterval(createHeart, 300);
-// 💖 Mobile finger trail (hearts)
+
+/* =========================
+   MOBILE HEART TRAIL
+========================= */
 
 document.addEventListener("touchmove", function(e) {
 
@@ -268,24 +303,16 @@ document.addEventListener("touchmove", function(e) {
     trail.innerHTML = "💖";
 
     trail.style.position = "fixed";
-
     trail.style.left = touch.clientX + "px";
     trail.style.top = touch.clientY + "px";
 
     trail.style.fontSize = "14px";
-
-    trail.style.background = "transparent";
-
     trail.style.pointerEvents = "none";
-
     trail.style.zIndex = "999";
 
     document.body.appendChild(trail);
 
-    setTimeout(() => {
-        trail.remove();
-    }, 300);
-
+    setTimeout(() => trail.remove(), 300);
 });
 
 
