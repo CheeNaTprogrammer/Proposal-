@@ -227,7 +227,8 @@ form.addEventListener("submit", function(event) {
 
     event.preventDefault();
 
-    let date = form.date.value;
+    let date = form.querySelector('input[name="date"]').value;
+
 
     message.innerHTML = "Saving... ⏳";
 
