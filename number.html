@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8">
+
+<title>Enter Date</title>
+
+<style>
+
+/* Background */
+
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+
+    /* Gradient background for glass effect */
+
+    background: linear-gradient(
+        135deg,
+        #ff4d88,
+        #ffd6e7,
+        #ff69b4
+    );
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    height: 100vh;
+}
+
+
+/* Glass Form */
+
+#formBox {
+
+    width: 90%;
+    max-width: 350px;
+
+    padding: 30px;
+
+    background: rgba(255, 255, 255, 0.12);
+
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+
+    border-radius: 20px;
+
+    border: 1px solid rgba(255, 255, 255, 0.25);
+
+    box-shadow:
+        0 15px 40px rgba(0, 0, 0, 0.25),
+        0 5px 15px rgba(255, 77, 136, 0.88);
+
+    text-align: center;
+
+    transition: transform 0.3s ease;
+}
+
+/* Hover */
+
+#formBox:hover {
+    transform: translateY(-3px);
+}
+
+/* Title */
+
+h2 {
+    color: rgb(24, 22, 22);
+    margin-bottom: 10px;
+}
+
+/* Input */
+
+input {
+
+    width: 90%;
+
+    padding: 12px;
+
+    margin-top: 15px;
+
+    font-size: 16px;
+
+    border-radius: 10px;
+
+    border: none;
+
+    outline: none;
+
+    background: rgba(255,255,255,0.8);
+}
+
+/* Button */
+
+button {
+
+    margin-top: 20px;
+
+    padding: 12px 25px;
+
+    font-size: 18px;
+
+    font-weight: bold;
+
+    border: none;
+
+    border-radius: 12px;
+
+    cursor: pointer;
+
+    color: black;
+
+    background: rgba(255, 255, 255, 0.15);
+
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+
+    border: 1px solid rgba(255, 255, 255, 0.3);
+
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+
+    transition: all 0.2s ease;
+}
+
+button:hover {
+    transform: scale(1.05);
+}
+
+/* Message */
+
+#message {
+    margin-top: 15px;
+    font-weight: bold;
+    color: rgb(22, 18, 18);
+}
+
+/* Confetti container */
+
+#confetti-container {
+
+    position: fixed;
+
+    width: 100%;
+    height: 100%;
+
+    top: 0;
+    left: 0;
+
+    overflow: hidden;
+
+    pointer-events: none;
+
+    z-index: 0;
+}
+
+/* Confetti pieces */
+
+.confetti {
+
+    position: absolute;
+
+    width: 8px;
+    height: 12px;
+
+    opacity: 0.9;
+
+    animation: fall linear forwards;
+}
+
+/* Falling animation */
+
+@keyframes fall {
+
+    0% {
+        transform: translateY(-10vh) rotate(0deg);
+        opacity: 1;
+    }
+
+    100% {
+        transform: translateY(110vh) rotate(720deg);
+        opacity: 0;
+    }
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div id="confetti-container"></div>
+
+<div id="formBox">
+
+<h2>Enter Date ❤️</h2>
+
+<form id="myForm">
+
+<input
+type="date"
+name="date"
+required>
+
+<br>
+
+<button type="submit">Submit</button>
+
+</form>
+
+<p id="message"></p>
+
+</div>
+
+<script>
+
+const form = document.getElementById("myForm");
+const message = document.getElementById("message");
+const button = form.querySelector("button");
+
+/* Form Submit */
+
+form.addEventListener("submit", function(event) {
+
+    event.preventDefault();
+
+    let date = form.date.value;
+
+    message.innerHTML = "Saving... ⏳";
+
+    button.disabled = true;
+    button.innerHTML = "Saving...";
+
+    fetch("https://script.google.com/macros/s/AKfycbztyJk1oz8pCr76CMpZLYhJANsn56aeiwKPdasbQemOE7n9le1CJ1assR-tLNFayDti/exec", {
+
+        method: "POST",
+
+        headers: {
+            "Content-Type": "application/x-www-form-urlencoded"
+        },
+
+        body: "date=" + encodeURIComponent(date)
+
+    })
+
+    .then(res => res.text())
+
+    .then(data => {
+
+        message.innerHTML = "Date saved successfully 💖";
+
+        /* Confetti burst */
+
+        for (let i = 0; i < 80; i++) {
+
+            setTimeout(createConfetti, i * 30);
+
+        }
+
+        form.reset();
+
+        button.disabled = false;
+        button.innerHTML = "Submit";
+
+    })
+
+    .catch(err => {
+
+        message.innerHTML = "Error saving date ❌";
+
+        button.disabled = false;
+        button.innerHTML = "Submit";
+
+    });
+
+});
+
+
+/* Confetti Function */
+
+function createConfetti() {
+
+    const confetti = document.createElement("div");
+
+    confetti.classList.add("confetti");
+
+    const colors = [
+        "#ff4d88",
+        "#ffd700",
+        "#00ffff",
+        "#ff69b4",
+        "#ffffff"
+    ];
+
+    confetti.style.backgroundColor =
+        colors[Math.floor(Math.random() * colors.length)];
+
+    confetti.style.left =
+        Math.random() * 100 + "vw";
+
+    confetti.style.animationDuration =
+        (3 + Math.random() * 2) + "s";
+
+    document
+        .getElementById("confetti-container")
+        .appendChild(confetti);
+
+    setTimeout(() => {
+
+        confetti.remove();
+
+    }, 5000);
+
+}
+
+
+/* Finger Trail (Mobile) */
+
+let lastTouchTime = 0;
+
+document.addEventListener("touchmove", function(e) {
+
+    const now = Date.now();
+
+    if (now - lastTouchTime < 40) return;
+
+    lastTouchTime = now;
+
+    const touch = e.touches[0];
+
+    const trail = document.createElement("div");
+
+    trail.style.position = "fixed";
+
+    trail.style.left = touch.clientX + "px";
+
+    trail.style.top = touch.clientY + "px";
+
+    trail.innerHTML = "💖";
+
+    trail.style.fontSize = "14px";
+
+    trail.style.pointerEvents = "none";
+
+    trail.style.zIndex = "999";
+
+    trail.style.opacity = "0.8";
+
+    document.body.appendChild(trail);
+
+    setTimeout(() => {
+
+        trail.remove();
+
+    }, 300);
+
+});
+
+
+/* Mouse Trail (Desktop) */
+
+let lastMouseTime = 0;
+
+document.addEventListener("mousemove", function(e) {
+
+    const now = Date.now();
+
+    if (now - lastMouseTime < 40) return;
+
+    lastMouseTime = now;
+
+    const trail = document.createElement("div");
+
+    trail.style.position = "fixed";
+
+    trail.style.left = e.clientX + "px";
+
+    trail.style.top = e.clientY + "px";
+
+    trail.innerHTML = "💖";
+
+    trail.style.fontSize = "14px";
+
+    trail.style.pointerEvents = "none";
+
+    trail.style.zIndex = "999";
+
+    trail.style.opacity = "0.8";
+
+    document.body.appendChild(trail);
+
+    setTimeout(() => {
+
+        trail.remove();
+
+    }, 300);
+
+});
+
+</script>
+
+</body>
+
+</html>
